@@ -25,6 +25,7 @@ main(int argc,char **argv) {
 	Window *w = curses.get_window();
 
 	w->printf("Hello World!\n");
+	w->mvprintf(10,10,"[10,10] X ");
 	w->refresh();
 
 	sleep(5);

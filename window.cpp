@@ -37,6 +37,18 @@ Window::printf(const char *format,...) {
 	return n;
 }
 
+size_t
+Window::mvprintf(int y,int x,const char *format,...) {
+	va_list ap;
+	size_t n;
+
+	wmove((WINDOW*)win,y,x);
+	va_start(ap,format);
+	n = vwprintw((WINDOW*)win,format,ap);
+	va_end(ap);
+	return n;
+}
+
 void
 Window::refresh() {
 

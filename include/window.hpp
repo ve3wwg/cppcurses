@@ -22,7 +22,8 @@ class Window {
 public:	Window();
 	~Window();
 
-	size_t printf(const char *format,...);
+	size_t printf(const char *format,...) __attribute((format(printf,2,3)));
+	size_t mvprintf(int y,int x,const char *format,...) __attribute((format(printf,4,5)));
 	void refresh();
 };
 
