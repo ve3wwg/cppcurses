@@ -28,7 +28,12 @@ main(int argc,char **argv) {
 	w->mvprintf(10,10,"[10,10] X ");
 	w->refresh();
 
-	sleep(5);
+	sleep(3);
+	w->erase();
+	w->mvprintf(12,10,"Almost done..");
+	w->refresh();
+	sleep(2);
+
 	okf = curses.close();	
 
 	return 0;

@@ -22,9 +22,12 @@ class Window {
 public:	Window();
 	~Window();
 
+	Window& erase();
+	Window& clear();
+	Window &refresh();
+
 	size_t printf(const char *format,...) __attribute((format(printf,2,3)));
 	size_t mvprintf(int y,int x,const char *format,...) __attribute((format(printf,4,5)));
-	void refresh();
 };
 
 #endif // WINDOW_HPP

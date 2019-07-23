@@ -49,11 +49,24 @@ Window::mvprintf(int y,int x,const char *format,...) {
 	return n;
 }
 
-void
+Window&
 Window::refresh() {
 
 	assert(win);
 	wrefresh((WINDOW*)win);
+	return *this;
+}
+
+Window&
+Window::erase() {
+	werase((WINDOW*)win);
+	return *this;
+}
+
+Window&
+Window::clear() {
+	wclear((WINDOW*)win);
+	return *this;
 }
 
 // End window.cpp
