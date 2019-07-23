@@ -21,6 +21,8 @@ class Window {
 
 public:	Window();
 	~Window();
+
+	size_t printw(const char *format,...);
 };
 
 #endif // WINDOW_HPP

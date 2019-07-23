@@ -24,4 +24,12 @@ Window::~Window() {
 	}
 }
 
+size_t
+Window::printw(const char *format,...) {
+	va_list ap;
+
+	va_start(ap,format);
+	va_end(ap);
+}
+
 // End window.cpp
