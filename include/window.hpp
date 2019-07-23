@@ -22,7 +22,8 @@ class Window {
 public:	Window();
 	~Window();
 
-	size_t printw(const char *format,...);
+	size_t printf(const char *format,...);
+	void refresh();
 };
 
 #endif // WINDOW_HPP

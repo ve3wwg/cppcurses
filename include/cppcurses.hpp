@@ -20,6 +20,8 @@ public:	CppCurses();
 	~CppCurses();
 	bool open();
 	bool close();
+
+	Window *get_window() { return mainw; }
 };
 
 #endif // CPPCURSES_HPP

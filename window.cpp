@@ -13,6 +13,8 @@
 
 #include "cppcurses.hpp"
 
+#include <curses.h>
+
 Window::Window(CppCurses *main,void *win) : win(win) {
 	mainf = true;	
 }
@@ -25,11 +27,21 @@ Window::~Window() {
 }
 
 size_t
-Window::printw(const char *format,...) {
+Window::printf(const char *format,...) {
 	va_list ap;
+	size_t n;
 
 	va_start(ap,format);
+	n = vwprintw((WINDOW*)win,format,ap);
 	va_end(ap);
+	return n;
+}
+
+void
+Window::refresh() {
+
+	assert(win);
+	wrefresh((WINDOW*)win);
 }
 
 // End window.cpp

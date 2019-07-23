@@ -21,6 +21,12 @@ main(int argc,char **argv) {
 
 	okf = curses.open();
 	assert(okf);
+
+	Window *w = curses.get_window();
+
+	w->printf("Hello World!\n");
+	w->refresh();
+
 	sleep(5);
 	okf = curses.close();	
 
