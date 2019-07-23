@@ -1,0 +1,27 @@
+# Common Settings for the Makefile
+######################################################################
+
+PREFIX		?= /usr/local
+
+TOPDIR := $(dir $(CURDIR)/$(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST)))
+
+STD		?= c++17
+
+.SUFFIXES:	.x1o
+
+CXX 		?= g++
+CC		?= gcc
+INCL		= -I/usr/local/include -I$(TOPDIR)/include
+
+CXXFLAGS	= -std=$(STD) -Wall -Wno-deprecated -fpermissive $(INCL) -fstrict-aliasing
+
+OPTZ		?= -g -Og
+#OPTZ		?= -O3
+
+.cpp.o:
+	$(CXX) -c $(CXXFLAGS) $(OPTZ) $< -o $*.o
+
+.cpp.x1o:	// UNIT_TEST object
+	$(CXX) -c $(CXXFLAGS) $(OPTZ) -DUNIT_TEST $< -o $*.x1o
+
+# End Makefile.incl
