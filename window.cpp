@@ -15,6 +15,7 @@
 
 #include <curses.h>
 #include <map>
+#include <array>
 
 static const std::map<char,attr_t> attr_map({
 	{ 'N',	A_NORMAL },		// Normal display (no highlight)
@@ -29,12 +30,31 @@ static const std::map<char,attr_t> attr_map({
 
 static std::map<char,chtype> graph_map;	// This must be initialized after initscr()
 
+static const std::array<short,8> colour_map({
+	COLOR_BLACK,
+	COLOR_BLUE,
+	COLOR_GREEN,
+	COLOR_CYAN,
+	COLOR_RED,
+	COLOR_MAGENTA,
+	COLOR_YELLOW,
+	COLOR_WHITE
+});
+
+static std::map<short/*colorno*/,short/*pair*/> pair_map;
+
+static inline short
+curs_colorno(short bg,short fg) {
+	return (bg << 3) | fg;
+}
+
 //////////////////////////////////////////////////////////////////////
 // Static method to initialize graph_map
 //////////////////////////////////////////////////////////////////////
 
 void
 Window::init_maps() {
+	short pairno = 0;
 
 	graph_map['L'] = ACS_ULCORNER;
 	graph_map['l'] = ACS_LLCORNER;
@@ -47,6 +67,24 @@ Window::init_maps() {
 	graph_map['-'] = ACS_HLINE;
 	graph_map['|'] = ACS_VLINE;
 	graph_map['+'] = ACS_PLUS;
+
+	for ( short bg = 0; bg < 8; ++bg ) {
+		for ( short fg= 0; fg < 8; ++fg ) {
+			short colour_no = curs_colorno(bg,fg);
+			short pair = pairno++;
+			init_pair(pair,colour_map[fg],colour_map[bg]);
+			pair_map[colour_no] = pair;
+		}
+	}
+}
+
+Window::colpair_t
+Window::to_colour(Colour bg,Colour fg) {
+	short colour_no = curs_colorno(short(bg),short(fg));
+
+	auto it = pair_map.find(colour_no);
+	assert(it != pair_map.end());
+	return colpair_t(it->second);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -112,6 +150,7 @@ Window::Window(CppCurses *main,void *win) : win(win) {
 	noecho();
 	keypad(stdscr,TRUE);	// Recognize keys
 	Window::init_maps();
+	main->init_colours();
 }
 
 Window::~Window() {

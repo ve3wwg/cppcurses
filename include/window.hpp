@@ -23,8 +23,23 @@ class Window {
 
 	Window(CppCurses *main,void *win);
 
-public:	Window();
+public:	typedef short colpair_t;
+
+	enum class Colour {
+		Black=0,
+		Blue,
+		Green,
+		Cyan,
+		Red,
+		Magenta,
+		Yellow,
+		White
+	};
+
+	Window();
 	~Window();
+
+	static colpair_t to_colour(Colour bg,Colour fg);	// Colour pair
 
 	Window& erase();
 	Window& clear();

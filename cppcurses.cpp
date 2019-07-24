@@ -80,4 +80,13 @@ CppCurses::yield() {
 	return *this;
 }
 
+void
+CppCurses::init_colours() {
+
+	assert(!coloursf);
+	if ( has_colors() ) {
+		
+	}
+}
+
 // End cppcurses.cpp

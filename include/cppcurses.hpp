@@ -13,7 +13,9 @@ class CppCurses {
 	
 	Window		*mainw = nullptr;
 	bool		openf = false;
+	bool		coloursf = false;
 
+	void init_colours();
 	void fini();
 
 public:	CppCurses();
