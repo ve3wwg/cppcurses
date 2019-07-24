@@ -25,13 +25,19 @@ main(int argc,char **argv) {
 	Window *w = curses.get_window();
 
 	w->printf("Hello World!\n");
-	w->mvprintf(10,10,"[10,10] X ");
+	w->mvprintf(10,10,"[10,10] ");
+	w->attr_on("R").addch('X').attr_off("R");
 	w->refresh();
-
 	curses.readch();
 	
+	w->addstr(" Oink!");
+	w->addstr(std::string(" A key was pressed."));
+	curses.readch();
+
 	w->erase();
+	w->attr_on("U");
 	w->mvprintf(12,10,"Almost done..");
+	w->attr_off("N");
 	w->refresh();
 
 	curses.readch();

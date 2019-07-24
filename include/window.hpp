@@ -8,6 +8,8 @@
 
 #include "cppcurses.hpp"
 
+#include <string>
+
 class CppCurses;
 
 class Window {
@@ -27,8 +29,15 @@ public:	Window();
 	Window& refresh();
 	
 	Window& move(int y,int x);
+	Window& addch(int ch);
+	Window& addstr(const char *str);
+	Window& addstr(const std::string& str);
 	size_t printf(const char *format,...) __attribute((format(printf,2,3)));
 	size_t mvprintf(int y,int x,const char *format,...) __attribute((format(printf,4,5)));
+
+	Window& attr_on(const char *attrs);
+	Window& attr_off(const char *attrs);
+	Window& attr_set(const char *attrs);
 };
 
 #endif // WINDOW_HPP
