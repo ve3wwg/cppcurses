@@ -28,11 +28,13 @@ main(int argc,char **argv) {
 	w->mvprintf(10,10,"[10,10] X ");
 	w->refresh();
 
-	sleep(3);
+	curses.readch();
+	
 	w->erase();
 	w->mvprintf(12,10,"Almost done..");
 	w->refresh();
-	sleep(2);
+
+	curses.readch();
 
 	okf = curses.close();	
 

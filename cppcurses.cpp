@@ -10,6 +10,7 @@
 #include <errno.h>
 #include <string.h>
 #include <assert.h>
+#include <sched.h>
 
 #include "cppcurses.hpp"
 
@@ -50,6 +51,33 @@ CppCurses::close() {
 		return true;
 	}
 	return false;
+}
+
+#undef getch
+
+int
+CppCurses::getch() {
+	int ch;
+
+	ch = ::wgetch(stdscr);
+	if ( ch == ERR )
+		return -1;
+	return ch;
+}
+
+int
+CppCurses::readch(unsigned ms) {
+	int ch;
+
+	while ( (ch = getch()) == -1 )
+		usleep(ms);
+	return ch;
+}
+
+CppCurses&
+CppCurses::yield() {
+	::sched_yield();
+	return *this;
 }
 
 // End cppcurses.cpp

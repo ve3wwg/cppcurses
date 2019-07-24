@@ -24,8 +24,9 @@ public:	Window();
 
 	Window& erase();
 	Window& clear();
-	Window &refresh();
-
+	Window& refresh();
+	
+	Window& move(int y,int x);
 	size_t printf(const char *format,...) __attribute((format(printf,2,3)));
 	size_t mvprintf(int y,int x,const char *format,...) __attribute((format(printf,4,5)));
 };

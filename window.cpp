@@ -17,12 +17,18 @@
 
 Window::Window(CppCurses *main,void *win) : win(win) {
 	mainf = true;	
+
+	cbreak();		// Disable line buffering
+	keypad(stdscr,TRUE);	// Recognize keys
 }
 
 Window::~Window() {
 	if ( mainf ) {
 		main->fini();
 		mainf = false;
+	} else	{
+		delwin((WINDOW*)win);
+		win = nullptr;
 	}
 }
 
@@ -54,6 +60,12 @@ Window::refresh() {
 
 	assert(win);
 	wrefresh((WINDOW*)win);
+	return *this;
+}
+
+Window&
+Window::move(int y,int x) {
+	wmove((WINDOW *)win,y,x);
 	return *this;
 }
 

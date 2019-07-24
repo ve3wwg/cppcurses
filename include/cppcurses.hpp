@@ -22,6 +22,10 @@ public:	CppCurses();
 	bool close();
 
 	Window *get_window() { return mainw; }
+
+	int getch();
+	int readch(unsigned ms=1000);
+	CppCurses& yield();
 };
 
 #endif // CPPCURSES_HPP
