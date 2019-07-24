@@ -30,8 +30,11 @@ main(int argc,char **argv) {
 	w->refresh();
 	curses.readch();
 	
-	w->addstr(" Oink!");
-	w->addstr(std::string(" A key was pressed."));
+	w->move(12,10).addgrstr("L----R");
+	w->move(13,10).addgrstr("|    |");
+	w->move(14,10).addgrstr("t    u");
+	w->move(15,10).addgrstr("|    |");
+	w->move(16,10).addgrstr("l----r");
 	curses.readch();
 
 	w->erase();

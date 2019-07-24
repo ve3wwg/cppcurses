@@ -27,6 +27,28 @@ static const std::map<char,attr_t> attr_map({
 	{ 'A',	A_ALTCHARSET },		// Alternate character set
 });
 
+static std::map<char,chtype> graph_map;	// This must be initialized after initscr()
+
+//////////////////////////////////////////////////////////////////////
+// Static method to initialize graph_map
+//////////////////////////////////////////////////////////////////////
+
+void
+Window::init_maps() {
+
+	graph_map['L'] = ACS_ULCORNER;
+	graph_map['l'] = ACS_LLCORNER;
+	graph_map['R'] = ACS_URCORNER;
+	graph_map['r'] = ACS_LRCORNER;
+	graph_map['t'] = ACS_LTEE;
+	graph_map['u'] = ACS_RTEE;
+	graph_map['T'] = ACS_TTEE;
+	graph_map['B'] = ACS_BTEE;
+	graph_map['-'] = ACS_HLINE;
+	graph_map['|'] = ACS_VLINE;
+	graph_map['+'] = ACS_PLUS;
+}
+
 //////////////////////////////////////////////////////////////////////
 // Convert attribute string to curses attributes
 //////////////////////////////////////////////////////////////////////
@@ -63,7 +85,7 @@ curs_wattr_set(void *win,attr_t a) {
 }
 
 static inline void
-curs_waddch(void *win,int ch) {
+curs_waddch(void *win,chtype ch) {
 	waddch((WINDOW*)win,ch);
 }
 
@@ -89,6 +111,7 @@ Window::Window(CppCurses *main,void *win) : win(win) {
 	cbreak();		// Disable line buffering
 	noecho();
 	keypad(stdscr,TRUE);	// Recognize keys
+	Window::init_maps();
 }
 
 Window::~Window() {
@@ -116,6 +139,20 @@ Window::addstr(const char *str) {
 Window&
 Window::addstr(const std::string& str) {
 	curs_waddstr(win,str.c_str());
+	return *this;
+}
+
+Window&
+Window::addgrstr(const char *str) {
+	char ch;
+
+	while ( (ch = *str++) != 0 ) {
+		auto it = graph_map.find(ch);
+		if ( it != graph_map.end() ) {
+			chtype c = it->second;
+			curs_waddch(win,c);
+		} else	curs_waddch(win,ch);
+	}
 	return *this;
 }
 

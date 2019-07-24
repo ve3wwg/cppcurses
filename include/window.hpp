@@ -19,6 +19,8 @@ class Window {
 	void		*win = nullptr;
 	bool		mainf = false;
 
+	static void init_maps();
+
 	Window(CppCurses *main,void *win);
 
 public:	Window();
@@ -32,6 +34,7 @@ public:	Window();
 	Window& addch(int ch);
 	Window& addstr(const char *str);
 	Window& addstr(const std::string& str);
+	Window& addgrstr(const char *str);
 	size_t printf(const char *format,...) __attribute((format(printf,2,3)));
 	size_t mvprintf(int y,int x,const char *format,...) __attribute((format(printf,4,5)));
 
