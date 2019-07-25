@@ -68,6 +68,8 @@ public:
 	Window& attr_set(const char *attrs,colpair_t = 0);
 
 	Window *new_window(short y,short x,short nlines,short ncols);
+	Window& hide();
+	Window& show();
 };
 
 #endif // WINDOW_HPP

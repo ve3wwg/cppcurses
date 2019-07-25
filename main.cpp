@@ -47,6 +47,7 @@ main(int argc,char **argv) {
 		w2->mvprintf(0,0,"+ Origin of the window..");
 		w2->mvprintf(2,2,"+ (2,2) In the window..");
 		curses.readch();
+
 		delete w2;
 	}
 	

@@ -340,4 +340,16 @@ Window::do_update() {
 	doupdate();
 }
 
+Window&
+Window::hide() {
+	hide_panel((PANEL*)panel);
+	return *this;
+}
+
+Window&
+Window::show() {
+	show_panel((PANEL*)panel);
+	return *this;
+}
+
 // End window.cpp
