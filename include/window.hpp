@@ -12,34 +12,38 @@
 
 class CppCurses;
 
+enum class Colour {
+	Black=0,
+	Blue,
+	Green,
+	Cyan,
+	Red,
+	Magenta,
+	Yellow,
+	White
+};
+
 class Window {
+public:
+	typedef short colpair_t;
+protected:
 	friend CppCurses;
 
 	CppCurses	*main = nullptr;
 	void		*win = nullptr;
 	bool		mainf = false;
+	colpair_t	colour_pair = 0;
 
-	static void init_maps();
+	static void init_maps(bool colour);
 
 	Window(CppCurses *main,void *win);
 
-public:	typedef short colpair_t;
+	static colpair_t to_colour(Colour bg,Colour fg);	// Colour pair
 
-	enum class Colour {
-		Black=0,
-		Blue,
-		Green,
-		Cyan,
-		Red,
-		Magenta,
-		Yellow,
-		White
-	};
+public:	
 
 	Window();
 	~Window();
-
-	static colpair_t to_colour(Colour bg,Colour fg);	// Colour pair
 
 	Window& erase();
 	Window& clear();
@@ -53,9 +57,12 @@ public:	typedef short colpair_t;
 	size_t printf(const char *format,...) __attribute((format(printf,2,3)));
 	size_t mvprintf(int y,int x,const char *format,...) __attribute((format(printf,4,5)));
 
+	Window& colour(Colour fg,Colour bg);
+	Window& fg(Colour fg);
+	Window& bg(Colour bg);
 	Window& attr_on(const char *attrs);
 	Window& attr_off(const char *attrs);
-	Window& attr_set(const char *attrs);
+	Window& attr_set(const char *attrs,colpair_t = 0);
 };
 
 #endif // WINDOW_HPP

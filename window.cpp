@@ -42,10 +42,23 @@ static const std::array<short,8> colour_map({
 });
 
 static std::map<short/*colorno*/,short/*pair*/> pair_map;
+static std::map<short/*pair*/,short/*colourno*/> rev_pair;
 
 static inline short
 curs_colorno(short bg,short fg) {
 	return (bg << 3) | fg;
+}
+
+static inline short
+curs_background(Window::colpair_t pair) {
+	short colourno = rev_pair.at(pair);
+	return (colourno >> 3) & 7;
+}
+
+static inline short
+curs_foreground(Window::colpair_t pair) {
+	short colourno = rev_pair.at(pair);
+	return colourno & 7;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -53,7 +66,7 @@ curs_colorno(short bg,short fg) {
 //////////////////////////////////////////////////////////////////////
 
 void
-Window::init_maps() {
+Window::init_maps(bool colour) {
 	short pairno = 0;
 
 	graph_map['L'] = ACS_ULCORNER;
@@ -68,19 +81,26 @@ Window::init_maps() {
 	graph_map['|'] = ACS_VLINE;
 	graph_map['+'] = ACS_PLUS;
 
-	for ( short bg = 0; bg < 8; ++bg ) {
-		for ( short fg= 0; fg < 8; ++fg ) {
-			short colour_no = curs_colorno(bg,fg);
-			short pair = pairno++;
-			init_pair(pair,colour_map[fg],colour_map[bg]);
-			pair_map[colour_no] = pair;
+	if ( colour ) {
+		for ( short bg = 0; bg < 8; ++bg ) {
+			for ( short fg= 0; fg < 8; ++fg ) {
+				short colour_no = curs_colorno(fg,bg);
+				short pair = pairno++;
+				init_pair(pair,colour_map[fg],colour_map[bg]);
+				pair_map[colour_no] = pair;
+				rev_pair[pair] = colour_no;
+			}
 		}
 	}
 }
 
+//////////////////////////////////////////////////////////////////////
+// Return the colour pair for { fg,bg }
+//////////////////////////////////////////////////////////////////////
+
 Window::colpair_t
-Window::to_colour(Colour bg,Colour fg) {
-	short colour_no = curs_colorno(short(bg),short(fg));
+Window::to_colour(Colour fg,Colour bg) {
+	short colour_no = curs_colorno(short(fg),short(bg));
 
 	auto it = pair_map.find(colour_no);
 	assert(it != pair_map.end());
@@ -113,13 +133,18 @@ curs_wattr_on(void *win,attr_t a) {
 }
 
 static inline void
+curs_wattron(void *win,Window::colpair_t colour) {
+	wattron((WINDOW*)win,COLOR_PAIR(colour));
+}
+
+static inline void
 curs_wattr_off(void *win,attr_t a) {
 	wattr_off((WINDOW*)win,a,nullptr);
 }
 
 static inline void
-curs_wattr_set(void *win,attr_t a) {
-	wattr_set((WINDOW*)win,a,0,nullptr);
+curs_wattr_set(void *win,attr_t a,int pair) {
+	wattr_set((WINDOW*)win,a,pair,nullptr);
 }
 
 static inline void
@@ -149,7 +174,6 @@ Window::Window(CppCurses *main,void *win) : win(win) {
 	cbreak();		// Disable line buffering
 	noecho();
 	keypad(stdscr,TRUE);	// Recognize keys
-	Window::init_maps();
 	main->init_colours();
 }
 
@@ -261,10 +285,36 @@ Window::attr_off(const char *attrs) {
 }
 
 Window&
-Window::attr_set(const char *attrs) {
+Window::attr_set(const char *attrs,colpair_t pair) {
 	attr_t a = to_attrs(attrs);
 
-	curs_wattr_set(win,a);
+	curs_wattr_set(win,a,pair);
+	return *this;
+}
+
+Window&
+Window::colour(Colour fg,Colour bg) {
+	colpair_t colour_pair = Window::to_colour(fg,bg);
+
+	curs_wattron(win,colour_pair);
+	return *this;
+}
+
+Window&
+Window::fg(Colour fg) {
+	Colour bg(Colour(curs_background(colour_pair)));;
+	colpair_t colour_pair = Window::to_colour(fg,bg);
+
+	curs_wattron(win,colour_pair);
+	return *this;
+}
+
+Window&
+Window::bg(Colour bg) {
+	Colour fg(Colour(curs_foreground(colour_pair)));;
+	colpair_t colour_pair = Window::to_colour(fg,bg);
+
+	curs_wattron(win,colour_pair);
 	return *this;
 }
 

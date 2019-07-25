@@ -85,7 +85,8 @@ CppCurses::init_colours() {
 
 	assert(!coloursf);
 	if ( has_colors() ) {
-		
+		start_color();
+		Window::init_maps(true);
 	}
 }
 
