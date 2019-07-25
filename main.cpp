@@ -31,7 +31,6 @@ main(int argc,char **argv) {
 
 	w->fg(Colour::Red).addstr("(Red)").bg(Colour::Yellow).addstr("(YellowBg)");
 	w->bg(Colour::Black);
-	w->refresh();
 	curses.readch();
 	
 	w->colour(Colour::Red,Colour::Blue);
@@ -42,12 +41,21 @@ main(int argc,char **argv) {
 	w->move(16,10).addgrstr("l--B--r");
 	curses.readch();
 
+	{
+		Window *w2 = curses.new_window(12,12,8,40);
+		w2->erase();
+		w2->mvprintf(0,0,"+ Origin of the window..");
+		w2->mvprintf(2,2,"+ (2,2) In the window..");
+		curses.readch();
+		delete w2;
+	}
+	
+	curses.readch();
+
 	w->erase();
 	w->attr_on("U");
 	w->mvprintf(12,10,"Almost done..");
 	w->attr_off("N");
-	w->refresh();
-
 	curses.readch();
 
 	okf = curses.close();	
