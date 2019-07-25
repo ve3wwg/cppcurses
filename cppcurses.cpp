@@ -59,6 +59,7 @@ int
 CppCurses::getch() {
 	int ch;
 
+	refresh();
 	ch = ::wgetch(stdscr);
 	if ( ch == ERR )
 		return -1;
@@ -69,6 +70,7 @@ int
 CppCurses::readch(unsigned ms) {
 	int ch;
 
+	refresh();
 	while ( (ch = getch()) == -1 )
 		usleep(ms);
 	return ch;
@@ -88,6 +90,18 @@ CppCurses::init_colours() {
 		start_color();
 		Window::init_maps(true);
 	}
+}
+
+CppCurses&
+CppCurses::refresh() {
+
+	Window::do_update();
+	return *this;
+}
+
+Window *
+CppCurses::new_window(short y,short x,short nlines,short ncols) {
+	return mainw->new_window(y,x,nlines,ncols);
 }
 
 // End cppcurses.cpp
