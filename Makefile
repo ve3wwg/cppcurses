@@ -1,6 +1,3 @@
-# LDFLAGS		= -L/usr/local/lib -lncurses
-#		  -Wl,-R$(PREFIX)/lib
-
 .PHONY:	all clean clobber install
 
 TARGETS = main
@@ -12,7 +9,7 @@ install: all
 OBJS	= main.o cppcurses.o window.o
 #XOBJS	= system.x1o dir.o
 
-LDFLAGS = -lncurses
+LDFLAGS = -lncurses -lpanel
 
 main: $(OBJS)
 	$(CXX) -o main $(OBJS) $(LDFLAGS)
@@ -25,10 +22,6 @@ clobber: clean
 	rm -f $(TARGETS)
 
 -include Makefile.incl
-
-######################################################################
-#  Dependencies
-######################################################################
 
 Makefile.deps: Makefile
 	$(CXX) $(CXXFLAGS) -MM 	$(OBJ:.o=.cpp) >Makefile.deps
