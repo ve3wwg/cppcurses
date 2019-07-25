@@ -24,9 +24,12 @@ public:	CppCurses();
 	bool close();
 
 	Window *get_window() { return mainw; }
+	Window *new_window(short y,short x,short nlines=-1,short ncols=-1);
 
 	int getch();
 	int readch(unsigned ms=1000);
+	CppCurses& refresh();
+
 	CppCurses& yield();
 };
 
