@@ -352,4 +352,22 @@ Window::show() {
 	return *this;
 }
 
+Window&
+Window::top() {
+	top_panel((PANEL*)panel);
+	return *this;
+}
+
+Window&
+Window::bottom() {
+	bottom_panel((PANEL*)panel);
+	return *this;
+}
+
+Window&
+Window::move_window(short starty,short startx) {
+	move_panel((PANEL*)panel,starty,startx);
+	return *this;
+}
+
 // End window.cpp

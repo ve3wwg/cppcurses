@@ -48,6 +48,9 @@ main(int argc,char **argv) {
 		w2->mvprintf(2,2,"+ (2,2) In the window..");
 		curses.readch();
 
+		w2->move_window(14,14);
+		curses.readch();
+
 		delete w2;
 	}
 	

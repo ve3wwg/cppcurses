@@ -70,6 +70,9 @@ public:
 	Window *new_window(short y,short x,short nlines,short ncols);
 	Window& hide();
 	Window& show();
+	Window& top();
+	Window& bottom();
+	Window& move_window(short starty,short startx);
 };
 
 #endif // WINDOW_HPP
