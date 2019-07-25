@@ -14,6 +14,8 @@
 #include "cppcurses.hpp"
 
 #include <curses.h>
+#include <panel.h>
+
 #include <map>
 #include <array>
 
@@ -168,7 +170,8 @@ curs_waddstr(void *win,const char *str) {
 #undef addstr
 #undef waddstr
 
-Window::Window(CppCurses *main,void *win) : win(win) {
+Window::Window(CppCurses *main,void *win) : main(main), win(win) {
+	panel = new_panel((WINDOW*)win);
 	mainf = true;	
 
 	cbreak();		// Disable line buffering
@@ -182,8 +185,10 @@ Window::~Window() {
 		main->fini();
 		mainf = false;
 	} else	{
+		del_panel((PANEL*)panel);
 		delwin((WINDOW*)win);
 		win = nullptr;
+		main->refresh();
 	}
 }
 
@@ -246,7 +251,7 @@ Window&
 Window::refresh() {
 
 	assert(win);
-	wrefresh((WINDOW*)win);
+	main->refresh();
 	return *this;
 }
 
@@ -316,6 +321,23 @@ Window::bg(Colour bg) {
 
 	curs_wattron(win,colour_pair);
 	return *this;
+}
+
+Window *
+Window::new_window(short y,short x,short nlines,short ncols) {
+	return new Window(this,y,x,nlines,ncols);
+}
+
+Window::Window(Window *parent,short y,short x,short nlines,short ncols) : main(parent->main) {
+	win = newwin(nlines,ncols,y,x);
+	panel = new_panel((WINDOW *)win);
+	top_panel((PANEL*)panel);
+}
+
+void
+Window::do_update() {
+	update_panels();
+	doupdate();
 }
 
 // End window.cpp

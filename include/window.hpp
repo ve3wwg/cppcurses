@@ -31,14 +31,17 @@ protected:
 
 	CppCurses	*main = nullptr;
 	void		*win = nullptr;
+	void		*panel = nullptr;
 	bool		mainf = false;
 	colpair_t	colour_pair = 0;
 
 	static void init_maps(bool colour);
 
 	Window(CppCurses *main,void *win);
+	Window(Window *parent,short y,short x,short nlines,short ncols);
 
 	static colpair_t to_colour(Colour bg,Colour fg);	// Colour pair
+	static void do_update();
 
 public:	
 
@@ -63,6 +66,8 @@ public:
 	Window& attr_on(const char *attrs);
 	Window& attr_off(const char *attrs);
 	Window& attr_set(const char *attrs,colpair_t = 0);
+
+	Window *new_window(short y,short x,short nlines,short ncols);
 };
 
 #endif // WINDOW_HPP
