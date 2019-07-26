@@ -70,7 +70,7 @@ int
 CppCurses::readch(unsigned ms) {
 	int ch;
 
-	refresh();
+	this->refresh();
 	while ( (ch = getch()) == -1 )
 		usleep(ms);
 	return ch;
@@ -102,6 +102,11 @@ CppCurses::refresh() {
 Window *
 CppCurses::new_window(short y,short x,short nlines,short ncols) {
 	return mainw->new_window(y,x,nlines,ncols);
+}
+
+Window *
+CppCurses::border_window(short y,short x,short nlines,short ncols) {
+	return mainw->border_window(y,x,nlines,ncols);
 }
 
 // End cppcurses.cpp

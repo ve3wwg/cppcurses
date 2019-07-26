@@ -24,7 +24,8 @@ public:	CppCurses();
 	bool close();
 
 	Window *get_window() { return mainw; }
-	Window *new_window(short y,short x,short nlines=-1,short ncols=-1);
+	Window *new_window(short y,short x,short nlines=0,short ncols=0);
+	Window *border_window(short y,short x,short nlines=0,short ncols=0);
 
 	int getch();
 	int readch(unsigned ms=1000);

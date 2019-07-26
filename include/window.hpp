@@ -31,6 +31,7 @@ protected:
 
 	CppCurses	*main = nullptr;
 	void		*win = nullptr;
+	void		*sub = nullptr;
 	void		*panel = nullptr;
 	bool		mainf = false;
 	colpair_t	colour_pair = 0;
@@ -67,7 +68,8 @@ public:
 	Window& attr_off(const char *attrs);
 	Window& attr_set(const char *attrs,colpair_t = 0);
 
-	Window *new_window(short y,short x,short nlines,short ncols);
+	Window *new_window(short y,short x,short nlines=0,short ncols=0);
+	Window *border_window(short y,short x,short nlines=0,short ncols=0);
 	Window& hide();
 	Window& show();
 	Window& top();

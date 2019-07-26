@@ -63,6 +63,11 @@ curs_foreground(Window::colpair_t pair) {
 	return colourno & 7;
 }
 
+static inline void
+curs_wmove(void *win,short y,short x) {
+	wmove((WINDOW*)win,y,x);
+}
+
 //////////////////////////////////////////////////////////////////////
 // Static method to initialize graph_map
 //////////////////////////////////////////////////////////////////////
@@ -171,7 +176,9 @@ curs_waddstr(void *win,const char *str) {
 #undef waddstr
 
 Window::Window(CppCurses *main,void *win) : main(main), win(win) {
+
 	panel = new_panel((WINDOW*)win);
+	set_panel_userptr((PANEL*)panel,this);
 	mainf = true;	
 
 	cbreak();		// Disable line buffering
@@ -185,6 +192,10 @@ Window::~Window() {
 		main->fini();
 		mainf = false;
 	} else	{
+		if ( sub ) {
+			delwin((WINDOW*)sub);
+			sub = nullptr;
+		}
 		del_panel((PANEL*)panel);
 		delwin((WINDOW*)win);
 		win = nullptr;
@@ -194,55 +205,64 @@ Window::~Window() {
 
 Window&
 Window::addch(int ch) {
-	curs_waddch(win,ch);
+	WINDOW *w = sub ? (WINDOW*)sub : (WINDOW*)win;
+
+	curs_waddch(w,ch);
 	return *this;
 }
 
 Window&
 Window::addstr(const char *str) {
-	curs_waddstr(win,str);
+	WINDOW *w = sub ? (WINDOW*)sub : (WINDOW*)win;
+
+	curs_waddstr(w,str);
 	return *this;
 }
 
 Window&
 Window::addstr(const std::string& str) {
-	curs_waddstr(win,str.c_str());
+	WINDOW *w = sub ? (WINDOW*)sub : (WINDOW*)win;
+
+	curs_waddstr(w,str.c_str());
 	return *this;
 }
 
 Window&
 Window::addgrstr(const char *str) {
+	WINDOW *w = sub ? (WINDOW*)sub : (WINDOW*)win;
 	char ch;
 
 	while ( (ch = *str++) != 0 ) {
 		auto it = graph_map.find(ch);
 		if ( it != graph_map.end() ) {
 			chtype c = it->second;
-			curs_waddch(win,c);
-		} else	curs_waddch(win,ch);
+			curs_waddch(w,c);
+		} else	curs_waddch(w,ch);
 	}
 	return *this;
 }
 
 size_t
 Window::printf(const char *format,...) {
+	WINDOW *w = sub ? (WINDOW*)sub : (WINDOW*)win;
 	va_list ap;
 	size_t n;
 
 	va_start(ap,format);
-	n = vwprintw((WINDOW*)win,format,ap);
+	n = vwprintw(w,format,ap);
 	va_end(ap);
 	return n;
 }
 
 size_t
 Window::mvprintf(int y,int x,const char *format,...) {
+	WINDOW *w = sub ? (WINDOW*)sub : (WINDOW*)win;
 	va_list ap;
 	size_t n;
 
-	wmove((WINDOW*)win,y,x);
+	wmove(w,y,x);
 	va_start(ap,format);
-	n = vwprintw((WINDOW*)win,format,ap);
+	n = vwprintw(w,format,ap);
 	va_end(ap);
 	return n;
 }
@@ -257,69 +277,81 @@ Window::refresh() {
 
 Window&
 Window::move(int y,int x) {
-	wmove((WINDOW *)win,y,x);
+	WINDOW *w = sub ? (WINDOW*)sub : (WINDOW*)win;
+
+	wmove(w,y,x);
 	return *this;
 }
 
 Window&
 Window::erase() {
-	werase((WINDOW*)win);
+	WINDOW *w = sub ? (WINDOW*)sub : (WINDOW*)win;
+
+	werase(w);
 	return *this;
 }
 
 Window&
 Window::clear() {
-	wclear((WINDOW*)win);
+	WINDOW *w = sub ? (WINDOW*)sub : (WINDOW*)win;
+
+	wclear(w);
 	return *this;
 }
 
 Window&
 Window::attr_on(const char *attrs) {
+	WINDOW *w = sub ? (WINDOW*)sub : (WINDOW*)win;
 	attr_t a = to_attrs(attrs);
 
-	curs_wattr_on(win,a);
+	curs_wattr_on(w,a);
 	return *this;
 }
 
 Window&
 Window::attr_off(const char *attrs) {
+	WINDOW *w = sub ? (WINDOW*)sub : (WINDOW*)win;
 	attr_t a = to_attrs(attrs);
 
-	curs_wattr_off(win,a);
+	curs_wattr_off(w,a);
 	return *this;
 }
 
 Window&
 Window::attr_set(const char *attrs,colpair_t pair) {
+	WINDOW *w = sub ? (WINDOW*)sub : (WINDOW*)win;
 	attr_t a = to_attrs(attrs);
 
-	curs_wattr_set(win,a,pair);
+	curs_wattr_set(w,a,pair);
 	return *this;
 }
 
 Window&
 Window::colour(Colour fg,Colour bg) {
+	WINDOW *w = sub ? (WINDOW*)sub : (WINDOW*)win;
 	colpair_t colour_pair = Window::to_colour(fg,bg);
 
-	curs_wattron(win,colour_pair);
+	curs_wattron(w,colour_pair);
 	return *this;
 }
 
 Window&
 Window::fg(Colour fg) {
+	WINDOW *w = sub ? (WINDOW*)sub : (WINDOW*)win;
 	Colour bg(Colour(curs_background(colour_pair)));;
 	colpair_t colour_pair = Window::to_colour(fg,bg);
 
-	curs_wattron(win,colour_pair);
+	curs_wattron(w,colour_pair);
 	return *this;
 }
 
 Window&
 Window::bg(Colour bg) {
+	WINDOW *w = sub ? (WINDOW*)sub : (WINDOW*)win;
 	Colour fg(Colour(curs_foreground(colour_pair)));;
 	colpair_t colour_pair = Window::to_colour(fg,bg);
 
-	curs_wattron(win,colour_pair);
+	curs_wattron(w,colour_pair);
 	return *this;
 }
 
@@ -328,14 +360,58 @@ Window::new_window(short y,short x,short nlines,short ncols) {
 	return new Window(this,y,x,nlines,ncols);
 }
 
+Window *
+Window::border_window(short y,short x,short nlines,short ncols) {
+	Window *w = new Window(this,y,x,nlines,ncols);
+
+	if ( nlines > 2 && ncols > 2 ) {
+		WINDOW *nw = (WINDOW*)w->win;
+
+		curs_wmove(nw,0,0);
+		curs_waddch(nw,ACS_ULCORNER);
+		for ( short tx=1; tx<ncols-1; ++tx )
+			curs_waddch(nw,ACS_HLINE);
+		curs_waddch(nw,ACS_URCORNER);
+
+		curs_wmove(nw,nlines-1,0);
+		curs_waddch(nw,ACS_LLCORNER);
+		for ( short tx=1; tx<ncols-1; ++tx )
+			curs_waddch(nw,ACS_HLINE);
+		curs_waddch(nw,ACS_LRCORNER);
+
+		for ( short ty=1; ty<nlines-1; ++ty ) {
+			curs_wmove(nw,ty,0);
+			curs_waddch(nw,ACS_VLINE);
+			curs_wmove(nw,ty,ncols-1);
+			curs_waddch(nw,ACS_VLINE);
+		}
+
+		touchwin((WINDOW*)nw);
+		w->sub = derwin(nw,nlines-2,ncols-2,1,1);
+	}
+	return w;
+}
+
 Window::Window(Window *parent,short y,short x,short nlines,short ncols) : main(parent->main) {
+
 	win = newwin(nlines,ncols,y,x);
 	panel = new_panel((WINDOW *)win);
+	set_panel_userptr((PANEL*)panel,this);
 	top_panel((PANEL*)panel);
+	this->erase();
 }
 
 void
 Window::do_update() {
+	PANEL *p = panel_above(nullptr);	// Start with bottom panel
+
+	while ( p ) {
+		Window *w = (Window*)panel_userptr(p);
+		if ( w->sub ) {
+			touchwin((WINDOW*)w->win);
+		}
+		p = panel_above((PANEL*)w->panel);
+	}
 	update_panels();
 	doupdate();
 }

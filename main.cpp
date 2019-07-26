@@ -42,13 +42,14 @@ main(int argc,char **argv) {
 	curses.readch();
 
 	{
-		Window *w2 = curses.new_window(12,12,8,40);
-		w2->erase();
+		Window *w2 = w->border_window(12,12,8,40);
+
 		w2->mvprintf(0,0,"+ Origin of the window..");
-		w2->mvprintf(2,2,"+ (2,2) In the window..");
+		w2->mvprintf(1,0,"+ (1,0) In the window..");
+		w2->mvprintf(6,38,".");
 		curses.readch();
 
-		w2->move_window(14,14);
+		w2->move_window(15,15);
 		curses.readch();
 
 		delete w2;
