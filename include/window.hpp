@@ -76,6 +76,8 @@ public:	Window();
 
 	int getch();
 	int readch(unsigned ms=100);
+
+	Window& yield();
 };
 
 #endif // WINDOW_HPP

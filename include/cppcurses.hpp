@@ -25,8 +25,6 @@ public:	CppCurses();
 	bool close();
 
 	Window *main_window() { return mainw; }
-
-	CppCurses& yield();
 };
 
 #endif // CPPCURSES_HPP

@@ -10,7 +10,6 @@
 #include <errno.h>
 #include <string.h>
 #include <assert.h>
-#include <sched.h>
 
 #include "cppcurses.hpp"
 
@@ -48,18 +47,11 @@ CppCurses::close() {
 	if ( mainw ) {
 		delete mainw;
 		mainw = nullptr;
-		return true;
 	}
-	return false;
+	return !mainw;
 }
 
 #undef getch
-
-CppCurses&
-CppCurses::yield() {
-	::sched_yield();
-	return *this;
-}
 
 void
 CppCurses::init_colours() {

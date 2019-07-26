@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
+#include <sched.h>
 #include <assert.h>
 
 #include "cppcurses.hpp"
@@ -473,6 +474,12 @@ Window::readch(unsigned ms) {
 	while ( (ch = curs_getch()) == -1 )
 		usleep(ms);
 	return ch;
+}
+
+Window&
+Window::yield() {
+	::sched_yield();
+	return *this;
 }
 
 // End window.cpp
