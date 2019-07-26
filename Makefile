@@ -9,7 +9,7 @@ install: all
 OBJS	= main.o cppcurses.o window.o
 #XOBJS	= system.x1o dir.o
 
-LDFLAGS = -lncurses -lpanel
+LDFLAGS = -lpanel -lncurses
 
 main: $(OBJS)
 	$(CXX) -o main $(OBJS) $(LDFLAGS)
