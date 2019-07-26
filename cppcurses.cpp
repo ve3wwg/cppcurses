@@ -55,27 +55,6 @@ CppCurses::close() {
 
 #undef getch
 
-int
-CppCurses::getch() {
-	int ch;
-
-	refresh();
-	ch = ::wgetch(stdscr);
-	if ( ch == ERR )
-		return -1;
-	return ch;
-}
-
-int
-CppCurses::readch(unsigned ms) {
-	int ch;
-
-	this->refresh();
-	while ( (ch = getch()) == -1 )
-		usleep(ms);
-	return ch;
-}
-
 CppCurses&
 CppCurses::yield() {
 	::sched_yield();
@@ -92,12 +71,14 @@ CppCurses::init_colours() {
 	}
 }
 
+#if 0
 CppCurses&
 CppCurses::refresh() {
 
 	Window::do_update();
 	return *this;
 }
+#endif
 
 Window *
 CppCurses::new_window(short y,short x,short nlines,short ncols) {

@@ -22,7 +22,7 @@ main(int argc,char **argv) {
 	okf = curses.open();
 	assert(okf);
 
-	Window *w = curses.get_window();
+	Window *w = curses.main_window();
 
 	w->printf("Hello World!\n");
 	w->colour(Colour::Yellow,Colour::Black).attr_on("B");
@@ -31,7 +31,7 @@ main(int argc,char **argv) {
 
 	w->fg(Colour::Red).addstr("(Red)").bg(Colour::Yellow).addstr("(YellowBg)");
 	w->bg(Colour::Black);
-	curses.readch();
+	w->readch();
 	
 	w->colour(Colour::Red,Colour::Blue);
 	w->move(12,10).addgrstr("L--T--R");
@@ -39,7 +39,7 @@ main(int argc,char **argv) {
 	w->move(14,10).addgrstr("t--+--u");
 	w->move(15,10).addgrstr("|  |  |");
 	w->move(16,10).addgrstr("l--B--r");
-	curses.readch();
+	w->readch();
 
 	{
 		Window *w2 = w->border_window(12,12,8,40);
@@ -47,21 +47,21 @@ main(int argc,char **argv) {
 		w2->mvprintf(0,0,"+ Origin of the window..");
 		w2->mvprintf(1,0,"+ (1,0) In the window..");
 		w2->mvprintf(6,38,".");
-		curses.readch();
+		w2->readch();
 
 		w2->move_window(15,15);
-		curses.readch();
+		w2->readch();
 
 		delete w2;
 	}
 	
-	curses.readch();
+	w->readch();
 
 	w->erase();
 	w->attr_on("U");
 	w->mvprintf(12,10,"Almost done..");
 	w->attr_off("N");
-	curses.readch();
+	w->readch();
 
 	okf = curses.close();	
 

@@ -44,9 +44,7 @@ protected:
 	static colpair_t to_colour(Colour bg,Colour fg);	// Colour pair
 	static void do_update();
 
-public:	
-
-	Window();
+public:	Window();
 	~Window();
 
 	Window& erase();
@@ -75,6 +73,9 @@ public:
 	Window& top();
 	Window& bottom();
 	Window& move_window(short starty,short startx);
+
+	int getch();
+	int readch(unsigned ms=100);
 };
 
 #endif // WINDOW_HPP

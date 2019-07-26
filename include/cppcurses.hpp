@@ -23,13 +23,9 @@ public:	CppCurses();
 	bool open();
 	bool close();
 
-	Window *get_window() { return mainw; }
+	Window *main_window() { return mainw; }
 	Window *new_window(short y,short x,short nlines=0,short ncols=0);
 	Window *border_window(short y,short x,short nlines=0,short ncols=0);
-
-	int getch();
-	int readch(unsigned ms=1000);
-	CppCurses& refresh();
 
 	CppCurses& yield();
 };

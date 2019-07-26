@@ -68,6 +68,14 @@ curs_wmove(void *win,short y,short x) {
 	wmove((WINDOW*)win,y,x);
 }
 
+static inline int
+curs_getch() {
+	return wgetch(stdscr);
+}
+
+#undef wgetch
+#undef getch
+
 //////////////////////////////////////////////////////////////////////
 // Static method to initialize graph_map
 //////////////////////////////////////////////////////////////////////
@@ -199,7 +207,7 @@ Window::~Window() {
 		del_panel((PANEL*)panel);
 		delwin((WINDOW*)win);
 		win = nullptr;
-		main->refresh();
+		this->do_update();
 	}
 }
 
@@ -271,7 +279,7 @@ Window&
 Window::refresh() {
 
 	assert(win);
-	main->refresh();
+	this->do_update();
 	return *this;
 }
 
@@ -444,6 +452,27 @@ Window&
 Window::move_window(short starty,short startx) {
 	move_panel((PANEL*)panel,starty,startx);
 	return *this;
+}
+
+int
+Window::getch() {
+	int ch;
+
+	this->refresh();
+	ch = curs_getch();
+	if ( ch == ERR )
+		return -1;
+	return ch;
+}
+
+int
+Window::readch(unsigned ms) {
+	int ch;
+
+	this->refresh();
+	while ( (ch = curs_getch()) == -1 )
+		usleep(ms);
+	return ch;
 }
 
 // End window.cpp
