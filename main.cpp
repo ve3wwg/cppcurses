@@ -17,12 +17,8 @@ CppCurses curses;
 
 int
 main(int argc,char **argv) {
-	bool okf;
-
-	okf = curses.open();
-	assert(okf);
-
-	Window *w = curses.main_window();
+	Window *w = curses.open();	// Main window
+	assert(w);
 
 	w->printf("Hello World!\n");
 	w->colour(Colour::Yellow,Colour::Black).attr_on("B");
@@ -63,7 +59,7 @@ main(int argc,char **argv) {
 	w->attr_off("N");
 	w->readch();
 
-	okf = curses.close();	
+	curses.close();	
 
 	return 0;
 }

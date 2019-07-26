@@ -20,12 +20,11 @@ class CppCurses {
 
 public:	CppCurses();
 	~CppCurses();
-	bool open();
+
+	Window *open();
 	bool close();
 
 	Window *main_window() { return mainw; }
-	Window *new_window(short y,short x,short nlines=0,short ncols=0);
-	Window *border_window(short y,short x,short nlines=0,short ncols=0);
 
 	CppCurses& yield();
 };

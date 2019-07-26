@@ -32,14 +32,14 @@ CppCurses::fini() {
 	endwin();
 }
 
-bool
+Window *
 CppCurses::open() {
 
 	if ( !openf ) {
 		mainw = new Window(this,initscr());
 		openf = true;
 	}
-	return true;
+	return mainw;
 }
 
 bool
@@ -69,25 +69,6 @@ CppCurses::init_colours() {
 		start_color();
 		Window::init_maps(true);
 	}
-}
-
-#if 0
-CppCurses&
-CppCurses::refresh() {
-
-	Window::do_update();
-	return *this;
-}
-#endif
-
-Window *
-CppCurses::new_window(short y,short x,short nlines,short ncols) {
-	return mainw->new_window(y,x,nlines,ncols);
-}
-
-Window *
-CppCurses::border_window(short y,short x,short nlines,short ncols) {
-	return mainw->border_window(y,x,nlines,ncols);
 }
 
 // End cppcurses.cpp
