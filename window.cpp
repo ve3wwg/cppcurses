@@ -401,6 +401,14 @@ Window::new_window(short y,short x,short nlines,short ncols) {
 	return w;
 }
 
+Window&
+Window::subwindow(short y,short x,short nlines,short ncols) {
+	if ( sub )
+		delwin((WINDOW*)sub);
+	sub = derwin((WINDOW*)win,nlines,ncols,y,x);
+	return *this;
+}
+
 Window *
 Window::border_window(short y,short x,short nlines,short ncols) {
 	Window *w = new Window(this,y,x,nlines,ncols);

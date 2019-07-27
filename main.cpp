@@ -51,9 +51,16 @@ main(int argc,char **argv) {
 		w2->mvprintf(0,0,"+ Origin of the window..");
 		w2->mvprintf(1,0,"+ (1,0) In the window..");
 		w2->mvprintf(6,38,".");
+		w2->colour(Colour::Green,Colour::Black).mvprintf(2,0,"Black on green..");
 		w2->readch();
 
 		w2->move_window(15,15);
+		w2->readch();
+
+		w2->erase();
+		w2->subwindow(3,3,4,30);
+		w2->colour(Colour::Black,Colour::Black);
+		w2->mvprintf(0,0,"(((new subwindow)))");
 		w2->readch();
 	}
 	w->readch();

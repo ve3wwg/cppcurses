@@ -71,6 +71,7 @@ public:	Window();
 
 	Window *new_window(short y,short x,short nlines=0,short ncols=0);
 	Window *border_window(short y,short x,short nlines=0,short ncols=0);
+	Window& subwindow(short y,short x,short nlines=0,short ncols=0);
 	Window& hide();
 	Window& show();
 	Window& top();
