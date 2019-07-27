@@ -11,6 +11,8 @@
 #include <string.h>
 #include <assert.h>
 
+#include <memory>
+
 #include "cppcurses.hpp"
 
 CppCurses curses;
@@ -23,13 +25,13 @@ main(int argc,char **argv) {
 	w->printf("Hello World!\n");
 	w->colour(Colour::Yellow,Colour::Black).attr_on("B");
 	w->mvprintf(10,10,"[10,10] ");
-	w->attr_on("R").addch('X').attr_off("R");
+//	w->attr_on("R").addch('X').attr_off("R");
 
 	w->fg(Colour::Red).addstr("(Red)").bg(Colour::Yellow).addstr("(YellowBg)");
 	w->bg(Colour::Black);
 	w->readch();
 	
-	w->colour(Colour::Red,Colour::Blue);
+	w->colour(Colour::Red,Colour::Blue).attr_off("R");
 	w->move(12,10).addgrstr("L--T--R");
 	w->move(13,10).addgrstr("|  |  |");
 	w->move(14,10).addgrstr("t--+--u");
@@ -39,6 +41,7 @@ main(int argc,char **argv) {
 
 	{
 		Window *w2 = w->border_window(12,12,8,40);
+		std::unique_ptr<Window> up_w2(w2);
 
 		w2->mvprintf(0,0,"+ Origin of the window..");
 		w2->mvprintf(1,0,"+ (1,0) In the window..");
@@ -47,10 +50,18 @@ main(int argc,char **argv) {
 
 		w2->move_window(15,15);
 		w2->readch();
-
-		delete w2;
 	}
-	
+	w->readch();
+	{
+		Window *w3 = w->new_window(15,15,8,50);
+		std::unique_ptr<Window> up_w3(w3);
+
+		w3->mvprintf(0,0,"* Origin of w3..");
+		w3->mvprintf(1,1," * one over..");
+		w3->readch();
+	}
+
+	w->mvprintf(8,5,"Pause..");
 	w->readch();
 
 	w->erase();

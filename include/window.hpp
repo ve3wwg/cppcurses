@@ -6,8 +6,8 @@
 #ifndef WINDOW_HPP
 #define WINDOW_HPP
 
+#include <stdint.h>
 #include "cppcurses.hpp"
-
 #include <string>
 
 class CppCurses;
@@ -25,7 +25,8 @@ enum class Colour {
 
 class Window {
 public:
-	typedef short colpair_t;
+	typedef short colpair_t;	// Local definition of colour pair
+	typedef uint32_t wattr_t;	// Local definition of attr_t
 protected:
 	friend CppCurses;
 
@@ -34,6 +35,7 @@ protected:
 	void		*sub = nullptr;
 	void		*panel = nullptr;
 	bool		mainf = false;
+	wattr_t		attr = 0;
 	colpair_t	colour_pair = 0;
 
 	static void init_maps(bool colour);

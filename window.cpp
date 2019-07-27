@@ -160,7 +160,8 @@ curs_wattr_off(void *win,attr_t a) {
 
 static inline void
 curs_wattr_set(void *win,attr_t a,int pair) {
-	wattr_set((WINDOW*)win,a,pair,nullptr);
+	wattrset((WINDOW*)win,a);
+	wcolor_set((WINDOW*)win,pair,nullptr);
 }
 
 static inline void
@@ -171,6 +172,16 @@ curs_waddch(void *win,chtype ch) {
 static inline void
 curs_waddstr(void *win,const char *str) {
 	waddstr((WINDOW*)win,str);
+}
+
+static inline void
+curs_wattr_get(void *win,Window::wattr_t& attrs,Window::colpair_t& pair) {
+	attr_t a = 0;
+	short p = 0;
+
+	wattr_get((WINDOW*)win,&a,&p,nullptr);
+	attrs = Window::wattr_t(a);
+	pair = Window::colpair_t(p);
 }
 
 #undef attr_on
@@ -311,34 +322,37 @@ Window::clear() {
 Window&
 Window::attr_on(const char *attrs) {
 	WINDOW *w = sub ? (WINDOW*)sub : (WINDOW*)win;
-	attr_t a = to_attrs(attrs);
+	attr = wattr_t(to_attrs(attrs));
 
-	curs_wattr_on(w,a);
+	curs_wattr_on(w,attr_t(attr));
+	curs_wattr_get(win,attr,colour_pair);
 	return *this;
 }
 
 Window&
 Window::attr_off(const char *attrs) {
 	WINDOW *w = sub ? (WINDOW*)sub : (WINDOW*)win;
-	attr_t a = to_attrs(attrs);
+	attr = wattr_t(to_attrs(attrs));
 
-	curs_wattr_off(w,a);
+	curs_wattr_off(w,attr_t(attr));
+	curs_wattr_get(win,attr,colour_pair);
 	return *this;
 }
 
 Window&
 Window::attr_set(const char *attrs,colpair_t pair) {
 	WINDOW *w = sub ? (WINDOW*)sub : (WINDOW*)win;
-	attr_t a = to_attrs(attrs);
+	attr = wattr_t(to_attrs(attrs));
 
-	curs_wattr_set(w,a,pair);
+	curs_wattr_set(w,attr_t(attr),pair);
+	curs_wattr_get(win,attr,colour_pair);
 	return *this;
 }
 
 Window&
 Window::colour(Colour fg,Colour bg) {
 	WINDOW *w = sub ? (WINDOW*)sub : (WINDOW*)win;
-	colpair_t colour_pair = Window::to_colour(fg,bg);
+	colour_pair = Window::to_colour(fg,bg);
 
 	curs_wattron(w,colour_pair);
 	return *this;
@@ -358,7 +372,7 @@ Window&
 Window::bg(Colour bg) {
 	WINDOW *w = sub ? (WINDOW*)sub : (WINDOW*)win;
 	Colour fg(Colour(curs_foreground(colour_pair)));;
-	colpair_t colour_pair = Window::to_colour(fg,bg);
+	colour_pair = Window::to_colour(fg,bg);
 
 	curs_wattron(w,colour_pair);
 	return *this;
@@ -366,7 +380,13 @@ Window::bg(Colour bg) {
 
 Window *
 Window::new_window(short y,short x,short nlines,short ncols) {
-	return new Window(this,y,x,nlines,ncols);
+	Window *w = new Window(this,y,x,nlines,ncols);
+
+	w->attr = this->attr;
+	w->colour_pair = this->colour_pair;
+	curs_wattr_set(w->win,w->attr,w->colour_pair);
+	wbkgd((WINDOW*)w->win,w->attr);
+	return w;
 }
 
 Window *
@@ -377,6 +397,12 @@ Window::border_window(short y,short x,short nlines,short ncols) {
 		WINDOW *nw = (WINDOW*)w->win;
 
 		curs_wmove(nw,0,0);
+
+		w->attr = this->attr;
+		w->colour_pair = this->colour_pair;
+		curs_wattr_set(nw,w->attr,w->colour_pair);
+		wbkgd((WINDOW*)nw,w->attr);
+
 		curs_waddch(nw,ACS_ULCORNER);
 		for ( short tx=1; tx<ncols-1; ++tx )
 			curs_waddch(nw,ACS_HLINE);
@@ -397,6 +423,7 @@ Window::border_window(short y,short x,short nlines,short ncols) {
 
 		touchwin((WINDOW*)nw);
 		w->sub = derwin(nw,nlines-2,ncols-2,1,1);
+		curs_wattr_set(w->sub,w->attr,w->colour_pair);
 	}
 	return w;
 }
