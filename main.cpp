@@ -22,10 +22,15 @@ main(int argc,char **argv) {
 	Window *w = curses.open();	// Main window
 	assert(w);
 
+	w->colour(Colour::White,Colour::Red);
+	w->mvprintf(8,10,"Is this in colour? ");
+	w->bgclear();
+	w->readch();
+
 	w->printf("Hello World!\n");
 	w->colour(Colour::Yellow,Colour::Black).attr_on("B");
 	w->mvprintf(10,10,"[10,10] ");
-//	w->attr_on("R").addch('X').attr_off("R");
+	w->attr_on("R").addch('X').attr_off("R");
 
 	w->fg(Colour::Red).addstr("(Red)").bg(Colour::Yellow).addstr("(YellowBg)");
 	w->bg(Colour::Black);

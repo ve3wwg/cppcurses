@@ -49,6 +49,7 @@ protected:
 public:	Window();
 	~Window();
 
+	Window& bgclear();
 	Window& erase();
 	Window& clear();
 	Window& refresh();

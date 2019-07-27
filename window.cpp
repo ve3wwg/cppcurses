@@ -205,6 +205,7 @@ Window::Window(CppCurses *main,void *win) : main(main), win(win) {
 	noecho();
 	keypad(stdscr,TRUE);	// Recognize keys
 	main->init_colours();
+	curs_wattr_get(win,attr,colour_pair);
 }
 
 Window::~Window() {
@@ -304,6 +305,14 @@ Window::move(int y,int x) {
 }
 
 Window&
+Window::bgclear() {
+	WINDOW *w = sub ? (WINDOW*)sub : (WINDOW*)win;
+
+	wbkgd((WINDOW*)w,attr_t(this->attr));
+	return *this;
+}
+
+Window&
 Window::erase() {
 	WINDOW *w = sub ? (WINDOW*)sub : (WINDOW*)win;
 
@@ -355,6 +364,7 @@ Window::colour(Colour fg,Colour bg) {
 	colour_pair = Window::to_colour(fg,bg);
 
 	curs_wattron(w,colour_pair);
+	curs_wattr_get(win,attr,colour_pair);
 	return *this;
 }
 
@@ -365,6 +375,7 @@ Window::fg(Colour fg) {
 	colpair_t colour_pair = Window::to_colour(fg,bg);
 
 	curs_wattron(w,colour_pair);
+	curs_wattr_get(win,attr,colour_pair);
 	return *this;
 }
 
@@ -375,6 +386,7 @@ Window::bg(Colour bg) {
 	colour_pair = Window::to_colour(fg,bg);
 
 	curs_wattron(w,colour_pair);
+	curs_wattr_get(win,attr,colour_pair);
 	return *this;
 }
 
