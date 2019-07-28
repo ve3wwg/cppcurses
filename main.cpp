@@ -30,7 +30,7 @@ main(int argc,char **argv) {
 	w->printf("Hello World!\n");
 	w->colour(Colour::Yellow,Colour::Black).attr_on("B");
 	w->mvprintf(10,10,"[10,10] ");
-	w->attr_on("R").addch('X').attr_off("R");
+	w->attr_on("R").addch('X').attr_off("R").attr_off("B");
 
 	w->fg(Colour::Red).addstr("(Red)").bg(Colour::Yellow).addstr("(YellowBg)");
 	w->bg(Colour::Black);
