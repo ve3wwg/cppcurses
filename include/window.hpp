@@ -78,6 +78,13 @@ public:	Window();
 	Window& bottom();
 	Window& move_window(short starty,short startx);
 
+	Window& get_yx(int& y,int& x);
+	Window& orig(int& y,int& x);
+	Window& size(int& y,int& x);
+
+	Window& sub_yx(int& y,int& x);
+	Window& sub_size(int& y,int& x);
+
 	int getch();
 	int readch(unsigned ms=100);
 

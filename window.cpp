@@ -184,6 +184,26 @@ curs_wattr_get(void *win,Window::wattr_t& attrs,Window::colpair_t& pair) {
 	pair = Window::colpair_t(p);
 }
 
+static inline void
+curs_getyx(void *win,int& y,int& x) {
+	getyx((WINDOW*)win,y,x);
+}
+
+static inline void
+curs_getparyx(void *win,int& y,int& x) {
+	getparyx((WINDOW*)win,y,x);
+}
+
+static inline void
+curs_getbegyx(void *win,int& y,int& x) {
+	getbegyx((WINDOW*)win,y,x);
+}
+
+static inline void
+curs_getmaxyx(void *win,int& y,int& x) {
+	getmaxyx((WINDOW*)win,y,x);
+}
+
 #undef attr_on
 #undef wattr_on
 #undef attr_off
@@ -194,6 +214,10 @@ curs_wattr_get(void *win,Window::wattr_t& attrs,Window::colpair_t& pair) {
 #undef waddch
 #undef addstr
 #undef waddstr
+#undef getyx
+#undef getparyx
+#undef getbegyx
+#undef getmaxyx
 
 Window::Window(CppCurses *main,void *win) : main(main), win(win) {
 
@@ -501,6 +525,40 @@ Window::bottom() {
 Window&
 Window::move_window(short starty,short startx) {
 	move_panel((PANEL*)panel,starty,startx);
+	return *this;
+}
+
+Window&
+Window::get_yx(int& y,int& x) {
+	curs_getyx((WINDOW*)win,y,x);
+	return *this;
+}
+
+Window&
+Window::sub_yx(int& y,int& x) {
+	if ( sub )
+		curs_getparyx(sub,y,x);
+	else	y = x = 0;		// No subwindow
+	return *this;
+}
+
+Window&
+Window::sub_size(int& y,int& x) {
+	WINDOW *w = sub ? (WINDOW*)sub : (WINDOW*)win;
+
+	curs_getmaxyx(w,y,x);
+	return *this;
+}
+
+Window&
+Window::orig(int& y,int& x) {
+	curs_getbegyx((WINDOW*)win,y,x);
+	return *this;
+}
+
+Window&
+Window::size(int& y,int& x) {
+	curs_getmaxyx((WINDOW*)win,y,x);
 	return *this;
 }
 
