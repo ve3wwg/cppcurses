@@ -26,8 +26,15 @@ main(int argc,char **argv) {
 	w->mvprintf(8,10,"Is this in colour? ");
 	w->bgclear();
 	w->readch();
+	{
+		int y, x;
 
-	w->printf("Hello World!\n");
+		w->size(y,x);
+		w->printf("Hello World! Main Window size { %d, %d } ",y,x);
+		w->orig(y,x);
+		w->printf("orig { %d, %d } ",y,x);
+	}
+
 	w->colour(Colour::Yellow,Colour::Black).attr_on("B");
 	w->mvprintf(10,10,"[10,10] ");
 	w->attr_on("R").addch('X').attr_off("R").attr_off("B");
@@ -47,11 +54,18 @@ main(int argc,char **argv) {
 	{
 		Window *w2 = w->border_window(12,12,8,40);
 		std::unique_ptr<Window> up_w2(w2);
+		int y, x, wy, wx;
 
 		w2->mvprintf(0,0,"+ Origin of the window..");
 		w2->mvprintf(1,0,"+ (1,0) In the window..");
+		w2->orig(y,x);
+		w2->size(wy,wx);
+		w2->mvprintf(2,0,"orig { %d, %d } size { %d, %d } ",y,x,wy,wx);
+		w2->sub_yx(y,x);
+		w2->sub_size(wy,wx);
+		w2->mvprintf(3,0,"subwin { %d, %d } size { %d, %d } ",y,x,wy,wx);
 		w2->mvprintf(6,38,".");
-		w2->colour(Colour::Green,Colour::Black).mvprintf(2,0,"Black on green..");
+		w2->colour(Colour::Green,Colour::Black).mvprintf(4,0,"Black on green..");
 		w2->readch();
 
 		w2->move_window(15,15);
