@@ -1,18 +1,21 @@
 .PHONY:	all clean clobber install
 
-TARGETS = main
-
-all:	$(TARGETS)
+all:	libcppcurses.a
 
 install: all
 
-OBJS	= main.o cppcurses.o window.o
-#XOBJS	= system.x1o dir.o
+OBJS	= cppcurses.o window.o
 
-LDFLAGS = -lpanel -lncurses
+LDFLAGS = -L. -lcppcurses -lpanel -lncurses
 
-main: $(OBJS)
-	$(CXX) -o main $(OBJS) $(LDFLAGS)
+libcppcurses.a: $(OBJS)
+	@rm -f libcppcurses.a	
+	$(AR) r libcppcurses.a $(OBJS)
+
+example: main
+
+main: 	libcppcurses.a main.o
+	$(CXX) -o main main.o $(LDFLAGS)
 
 clean:	
 	rm -f *.o *.x1o a.out core core.*
@@ -21,9 +24,6 @@ clobber: clean
 	@rm -f .errs.t
 	rm -f $(TARGETS)
 
--include Makefile.incl
-
-Makefile.deps: Makefile
-	$(CXX) $(CXXFLAGS) -MM 	$(OBJ:.o=.cpp) >Makefile.deps
+include Makefile.incl
 
 # End Makefile

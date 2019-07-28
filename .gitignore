@@ -1,3 +1,4 @@
 .errs.t
 *.o
 main
+*.a
