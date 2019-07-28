@@ -364,7 +364,7 @@ Window::colour(Colour fg,Colour bg) {
 	colour_pair = Window::to_colour(fg,bg);
 
 	curs_wattron(w,colour_pair);
-	curs_wattr_get(win,attr,colour_pair);
+	curs_wattr_get(w,attr,colour_pair);
 	return *this;
 }
 
@@ -375,7 +375,7 @@ Window::fg(Colour fg) {
 	colpair_t colour_pair = Window::to_colour(fg,bg);
 
 	curs_wattron(w,colour_pair);
-	curs_wattr_get(win,attr,colour_pair);
+	curs_wattr_get(w,attr,colour_pair);
 	return *this;
 }
 
@@ -386,7 +386,7 @@ Window::bg(Colour bg) {
 	colour_pair = Window::to_colour(fg,bg);
 
 	curs_wattron(w,colour_pair);
-	curs_wattr_get(win,attr,colour_pair);
+	curs_wattr_get(w,attr,colour_pair);
 	return *this;
 }
 
@@ -406,6 +406,8 @@ Window::subwindow(short y,short x,short nlines,short ncols) {
 	if ( sub )
 		delwin((WINDOW*)sub);
 	sub = derwin((WINDOW*)win,nlines,ncols,y,x);
+	curs_wattr_set(sub,attr,colour_pair);
+	wbkgd((WINDOW*)sub,attr);
 	return *this;
 }
 
