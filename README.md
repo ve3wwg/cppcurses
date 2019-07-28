@@ -123,3 +123,9 @@ and run it:
 
 Just press a key to advance beyond the current program state.
 Source code is in main.cpp.
+
+Spelling Note:
+--------------
+
+Yes, the spelling of "color" is "colour" in Canada, eh?  If this offends you,
+fork the repo and change it.
