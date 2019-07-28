@@ -108,6 +108,7 @@ Once Installed:
 
     #include <cppcurses/cppcurses.hpp>
 
+This will automatically include <cppcurses/window.hpp>.
 
 Grotty Example Program
 ----------------------
