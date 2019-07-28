@@ -13,7 +13,7 @@
 
 #include <memory>
 
-#include "cppcurses.hpp"
+#include <cppcurses/cppcurses.hpp>
 
 CppCurses curses;
 

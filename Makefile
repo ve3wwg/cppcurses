@@ -15,12 +15,12 @@ libcppcurses.a: $(OBJS)
 install: libcppcurses.a
 	$(MKDIR) -p $(PREFIX)/include/cppcurses
 	$(MKDIR) -p $(PREFIX)/lib
-	$(INSTALL) include/cppcurses.hpp $(PREFIX)/include/cppcurses/cppcurses.hpp
-	$(INSTALL) include/window.hpp $(PREFIX)/include/cppcurses/window.hpp
+	$(INSTALL) cppcurses/cppcurses.hpp $(PREFIX)/include/cppcurses/cppcurses.hpp
+	$(INSTALL) cppcurses/window.hpp $(PREFIX)/include/cppcurses/window.hpp
 	$(INSTALL) libcppcurses.a $(PREFIX)/lib
 
 uninstall:
-	rm -fr $(PREFIX)/include/cppcurses $(PREFIX)/lib/libcppcurses.a
+	rm -fr $(PREFIX)/cppcurses/cppcurses $(PREFIX)/lib/libcppcurses.a
 
 example: main
 

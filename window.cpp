@@ -12,7 +12,7 @@
 #include <sched.h>
 #include <assert.h>
 
-#include "cppcurses.hpp"
+#include <cppcurses/cppcurses.hpp>
 
 #include <curses.h>
 #include <panel.h>

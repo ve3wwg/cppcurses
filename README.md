@@ -101,6 +101,14 @@ To install set your PREFIX and make install:
 
     $ PREFIX=/usr/local make install
 
+Once Installed:
+---------------
+
+    Set your Makefile so that include files will be pulled from $(PREFIX)/include:
+
+    #include <cppcurses/cppcurses.hpp>
+
+
 Grotty Example Program
 ----------------------
 

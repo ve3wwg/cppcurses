@@ -6,7 +6,7 @@
 #ifndef CPPCURSES_HPP
 #define CPPCURSES_HPP
 
-#include "window.hpp"
+#include <cppcurses/window.hpp>
 
 class CppCurses {
 	friend Window;

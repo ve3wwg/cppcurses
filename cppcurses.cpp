@@ -11,7 +11,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "cppcurses.hpp"
+#include <cppcurses/cppcurses.hpp>
 
 #include <ncurses.h>
 
