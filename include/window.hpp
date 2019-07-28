@@ -27,6 +27,7 @@ class Window {
 public:
 	typedef short colpair_t;	// Local definition of colour pair
 	typedef uint32_t wattr_t;	// Local definition of attr_t
+
 protected:
 	friend CppCurses;
 
@@ -42,6 +43,7 @@ protected:
 
 	Window(CppCurses *main,void *win);
 	Window(Window *parent,short y,short x,short nlines,short ncols);
+	void wposition();					// Internal
 
 	static colpair_t to_colour(Colour bg,Colour fg);	// Colour pair
 	static void do_update();
@@ -84,6 +86,8 @@ public:	Window();
 
 	Window& sub_yx(int& y,int& x);
 	Window& sub_size(int& y,int& x);
+
+	Window& cursor(bool on);
 
 	int getch();
 	int readch(unsigned ms=100);
