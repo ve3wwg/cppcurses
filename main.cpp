@@ -33,6 +33,8 @@ main(int argc,char **argv) {
 		w->printf("Hello World! Main Window size { %d, %d } ",y,x);
 		w->orig(y,x);
 		w->printf("orig { %d, %d } ",y,x);
+		w->get_yx(y,x);
+		w->printf("+ cursor { %d, %d } ",y,x);
 	}
 
 	w->colour(Colour::Yellow,Colour::Black).attr_on("B");
@@ -69,7 +71,9 @@ main(int argc,char **argv) {
 		w2->readch();
 
 		w2->move_window(15,15);
+		w2->cursor(false);
 		w2->readch();
+		w2->cursor(true);
 
 		w2->erase();
 		w2->subwindow(3,3,4,30);
@@ -87,11 +91,13 @@ main(int argc,char **argv) {
 		w3->readch();
 	}
 
+	w->cursor(false);
 	w->mvprintf(8,5,"Pause..");
 	w->readch();
 
 	w->erase();
 	w->attr_on("U");
+	w->cursor(true);
 	w->mvprintf(12,10,"Almost done..");
 	w->attr_off("N");
 	w->readch();

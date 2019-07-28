@@ -47,6 +47,27 @@ static const std::array<short,8> colour_map({
 static std::map<short/*colorno*/,short/*pair*/> pair_map;
 static std::map<short/*pair*/,short/*colourno*/> rev_pair;
 
+static inline void
+curs_visibility(void *win,int flag) {
+
+	if ( flag < 0 )
+		flag = 0;
+	else if ( flag > 2 )
+		flag = 2;
+
+	curs_set(flag);
+}
+
+static inline void
+curs_leaveok(void *win,bool flag) {
+	leaveok((WINDOW*)win,flag);
+}
+
+static inline void
+curs_move(void *win,int y,int x) {
+	wmove((WINDOW*)win,y,x);
+}
+
 static inline short
 curs_colorno(short bg,short fg) {
 	return (bg << 3) | fg;
@@ -76,6 +97,7 @@ curs_getch() {
 
 #undef wgetch
 #undef getch
+#undef curs_set
 
 //////////////////////////////////////////////////////////////////////
 // Static method to initialize graph_map
@@ -314,6 +336,13 @@ Window::mvprintf(int y,int x,const char *format,...) {
 
 Window&
 Window::refresh() {
+	PANEL *p = panel_above(nullptr);	// Bottom panel is returned
+
+	while ( p ) {
+		Window *w = (Window*)panel_userptr(p);
+		w->wposition();
+		p = panel_above(p);		// Next panel up
+	}
 
 	assert(win);
 	this->do_update();
@@ -422,6 +451,8 @@ Window::new_window(short y,short x,short nlines,short ncols) {
 	w->colour_pair = this->colour_pair;
 	curs_wattr_set(w->win,w->attr,w->colour_pair);
 	wbkgd((WINDOW*)w->win,w->attr);
+	curs_leaveok(w->win,false);
+	curs_move(w->win,0,0);
 	return w;
 }
 
@@ -432,6 +463,8 @@ Window::subwindow(short y,short x,short nlines,short ncols) {
 	sub = derwin((WINDOW*)win,nlines,ncols,y,x);
 	curs_wattr_set(sub,attr,colour_pair);
 	wbkgd((WINDOW*)sub,attr);
+	curs_leaveok(sub,false);
+	curs_move(sub,0,0);
 	return *this;
 }
 
@@ -470,6 +503,8 @@ Window::border_window(short y,short x,short nlines,short ncols) {
 		touchwin((WINDOW*)nw);
 		w->sub = derwin(nw,nlines-2,ncols-2,1,1);
 		curs_wattr_set(w->sub,w->attr,w->colour_pair);
+		curs_leaveok(w->sub,false);
+		curs_move(w->sub,0,0);
 	}
 	return w;
 }
@@ -586,6 +621,26 @@ Window::readch(unsigned ms) {
 Window&
 Window::yield() {
 	::sched_yield();
+	return *this;
+}
+
+void
+Window::wposition() {
+	int ry, rx, y, x;
+	
+	if ( !sub )
+		return;		// No subwindow to fuss about
+	
+	curs_getparyx(sub,ry,rx);
+	curs_getyx(sub,y,x);
+	curs_move(win,ry+y,rx+x);
+}
+
+Window&
+Window::cursor(bool on) {
+	WINDOW *w = sub ? (WINDOW*)sub : (WINDOW*)win;
+
+	curs_visibility(w,on?1:0);
 	return *this;
 }
 
