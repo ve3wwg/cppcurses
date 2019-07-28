@@ -15,7 +15,7 @@ This is not active until you open it thusly:
     if ( !(main_win = curses.open()) )
         abort();
 
-The main window may also be fetched any time with:
+The main window may also be fetched any time after curses is open, with:
 
     main_win = curses.main_window();
 
@@ -87,6 +87,19 @@ is equivalent to:
 
     w->move(16,10);
     w->addgrstr("l--B--r");
+
+Build:
+------
+
+To build the library, do:
+
+    $ make
+
+This creates libcppcurses.a, which can be statically linked against.
+
+To install set your PREFIX and make install:
+
+    $ PREFIX=/usr/local make install
 
 Grotty Example Program
 ----------------------
