@@ -19,13 +19,20 @@ CppCurses curses;
 
 int
 main(int argc,char **argv) {
+	int ikey;
 	Window *w = curses.open();	// Main window
 	assert(w);
 
 	w->colour(Colour::White,Colour::Red);
 	w->mvprintf(8,10,"Is this in colour? ");
 	w->bgclear();
-	w->readch();
+
+	ikey = w->readch();
+	if ( Key(ikey) == Key::Up ) {
+		curses.close();
+		exit(1);
+	}
+
 	{
 		int y, x;
 
@@ -43,6 +50,7 @@ main(int argc,char **argv) {
 
 	w->fg(Colour::Red).addstr("(Red)").bg(Colour::Yellow).addstr("(YellowBg)");
 	w->bg(Colour::Black);
+	
 	w->readch();
 	
 	w->colour(Colour::Red,Colour::Blue).attr_off("R");

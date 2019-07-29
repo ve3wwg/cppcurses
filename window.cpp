@@ -10,6 +10,7 @@
 #include <errno.h>
 #include <string.h>
 #include <sched.h>
+#include <stdint.h>
 #include <assert.h>
 
 #include <cppcurses/cppcurses.hpp>
@@ -46,6 +47,300 @@ static const std::array<short,8> colour_map({
 
 static std::map<short/*colorno*/,short/*pair*/> pair_map;
 static std::map<short/*pair*/,short/*colourno*/> rev_pair;
+
+static std::map<Key,uint32_t> rkeymap;
+static std::map<uint32_t,Key> keymap({
+#ifdef KEY_BREAK
+	{ KEY_BREAK,	Key::Break }, 
+#endif
+#ifdef KEY_SRESET
+	{ KEY_SRESET,	Key::Sreset }, 
+#endif
+#ifdef KEY_RESET
+	{ KEY_RESET,	Key::Reset }, 
+#endif
+#ifdef KEY_DOWN
+	{ KEY_DOWN,	Key::Down }, 
+#endif
+#ifdef KEY_UP
+	{ KEY_UP,	Key::Up }, 
+#endif
+#ifdef KEY_LEFT
+	{ KEY_LEFT,	Key::Left }, 
+#endif
+#ifdef KEY_RIGHT
+	{ KEY_RIGHT,	Key::Right }, 
+#endif
+#ifdef KEY_HOME
+	{ KEY_HOME,	Key::Home }, 
+#endif
+#ifdef KEY_BACKSPACE
+	{ KEY_BACKSPACE, Key::Backspace }, 
+#endif
+#ifdef KEY_F0
+	{ KEY_F0,	Key::F0 }, 
+#endif
+#ifdef KEY_F
+	{ KEY_F(1),	Key::F1 }, 
+	{ KEY_F(2),	Key::F2 }, 
+	{ KEY_F(3),	Key::F3 }, 
+	{ KEY_F(4),	Key::F4 }, 
+	{ KEY_F(5),	Key::F5 }, 
+	{ KEY_F(6),	Key::F6 }, 
+	{ KEY_F(7),	Key::F7 }, 
+	{ KEY_F(8),	Key::F8 }, 
+	{ KEY_F(9),	Key::F9 }, 
+	{ KEY_F(10),	Key::F10 }, 
+	{ KEY_F(11),	Key::F11 }, 
+	{ KEY_F(12),	Key::F12 }, 
+#endif
+#ifdef KEY_DL
+	{ KEY_DL,	Key::Dl }, 
+#endif
+#ifdef KEY_IL
+	{ KEY_IL,	Key::Il }, 
+#endif
+#ifdef KEY_DC
+	{ KEY_DC,	Key::Dc }, 
+#endif
+#ifdef KEY_IC
+	{ KEY_IC,	Key::Ic }, 
+#endif
+#ifdef KEY_EIC
+	{ KEY_EIC,	Key::Eic }, 
+#endif
+#ifdef KEY_CLEAR
+	{ KEY_CLEAR,	Key::Clear }, 
+#endif
+#ifdef KEY_EOS
+	{ KEY_EOS,	Key::Eos }, 
+#endif
+#ifdef KEY_EOL
+	{ KEY_EOL,	Key::Eol }, 
+#endif
+#ifdef KEY_SF
+	{ KEY_SF,	Key::Sf }, 
+#endif
+#ifdef KEY_SR
+	{ KEY_SR,	Key::Sr }, 
+#endif
+#ifdef KEY_NPAGE
+	{ KEY_NPAGE,	Key::Npage }, 
+#endif
+#ifdef KEY_PPAGE
+	{ KEY_PPAGE,	Key::Ppage }, 
+#endif
+#ifdef KEY_STAB
+	{ KEY_STAB,	Key::Stab }, 
+#endif
+#ifdef KEY_CTAB
+	{ KEY_CTAB,	Key::Ctab }, 
+#endif
+#ifdef KEY_CATAB
+	{ KEY_CATAB,	Key::Catab }, 
+#endif
+#ifdef KEY_ENTER
+	{ KEY_ENTER,	Key::Enter }, 
+#endif
+#ifdef KEY_PRINT
+	{ KEY_PRINT,	Key::Print }, 
+#endif
+#ifdef KEY_LL
+	{ KEY_LL,	Key::Ll }, 
+#endif
+#ifdef KEY_A1
+	{ KEY_A1,	Key::A1 }, 
+#endif
+#ifdef KEY_A3
+	{ KEY_A3,	Key::A3 }, 
+#endif
+#ifdef KEY_B2
+	{ KEY_B2,	Key::B2 }, 
+#endif
+#ifdef KEY_C1
+	{ KEY_C1,	Key::C1 }, 
+#endif
+#ifdef KEY_C3
+	{ KEY_C3,	Key::C3 }, 
+#endif
+#ifdef KEY_BTAB
+	{ KEY_BTAB,	Key::Btab }, 
+#endif
+#ifdef KEY_BEG
+	{ KEY_BEG,	Key::Beg }, 
+#endif
+#ifdef KEY_CANCEL
+	{ KEY_CANCEL,	Key::Cancel }, 
+#endif
+#ifdef KEY_CLOSE
+	{ KEY_CLOSE,	Key::Close }, 
+#endif
+#ifdef KEY_COMMAND
+	{ KEY_COMMAND,	Key::Command }, 
+#endif
+#ifdef KEY_COPY
+	{ KEY_COPY,	Key::Copy }, 
+#endif
+#ifdef KEY_CREATE
+	{ KEY_CREATE,	Key::Create }, 
+#endif
+#ifdef KEY_END
+	{ KEY_END,	Key::End }, 
+#endif
+#ifdef KEY_EXIT
+	{ KEY_EXIT,	Key::Exit }, 
+#endif
+#ifdef KEY_FIND
+	{ KEY_FIND,	Key::Find }, 
+#endif
+#ifdef KEY_HELP
+	{ KEY_HELP,	Key::Help }, 
+#endif
+#ifdef KEY_MARK
+	{ KEY_MARK,	Key::Mark }, 
+#endif
+#ifdef KEY_MESSAGE
+	{ KEY_MESSAGE,	Key::Message }, 
+#endif
+#ifdef KEY_MOVE
+	{ KEY_MOVE,	Key::Move }, 
+#endif
+#ifdef KEY_NEXT
+	{ KEY_NEXT,	Key::Next }, 
+#endif
+#ifdef KEY_OPEN
+	{ KEY_OPEN,	Key::Open }, 
+#endif
+#ifdef KEY_OPTIONS
+	{ KEY_OPTIONS,	Key::Options }, 
+#endif
+#ifdef KEY_PREVIOUS
+	{ KEY_PREVIOUS,	Key::Previous }, 
+#endif
+#ifdef KEY_REDO
+	{ KEY_REDO,	Key::Redo }, 
+#endif
+#ifdef KEY_REFERENCE
+	{ KEY_REFERENCE, Key::Reference }, 
+#endif
+#ifdef KEY_REFRESH
+	{ KEY_REFRESH,	Key::Refresh }, 
+#endif
+#ifdef KEY_REPLACE
+	{ KEY_REPLACE,	Key::Replace }, 
+#endif
+#ifdef KEY_RESTART
+	{ KEY_RESTART,	Key::Restart }, 
+#endif
+#ifdef KEY_RESUME
+	{ KEY_RESUME,	Key::Resume }, 
+#endif
+#ifdef KEY_SAVE
+	{ KEY_SAVE,	Key::Save }, 
+#endif
+#ifdef KEY_SBEG
+	{ KEY_SBEG,	Key::SBeg }, 
+#endif
+#ifdef KEY_SCANCEL
+	{ KEY_SCANCEL,	Key::SCancel }, 
+#endif
+#ifdef KEY_SCOMMAND
+	{ KEY_SCOMMAND,	Key::SCommand }, 
+#endif
+#ifdef KEY_SCOPY
+	{ KEY_SCOPY,	Key::SCopy }, 
+#endif
+#ifdef KEY_SCREATE
+	{ KEY_SCREATE,	Key::SCreate }, 
+#endif
+#ifdef KEY_SDC
+	{ KEY_SDC,	Key::SDc }, 
+#endif
+#ifdef KEY_SDL
+	{ KEY_SDL,	Key::SDl }, 
+#endif
+#ifdef KEY_SELECT
+	{ KEY_SELECT,	Key::Select }, 
+#endif
+#ifdef KEY_SEND
+	{ KEY_SEND,	Key::SEnd }, 
+#endif
+#ifdef KEY_SEOL
+	{ KEY_SEOL,	Key::SEol }, 
+#endif
+#ifdef KEY_SEXIT
+	{ KEY_SEXIT,	Key::SExit }, 
+#endif
+#ifdef KEY_SFIND
+	{ KEY_SFIND,	Key::SFind }, 
+#endif
+#ifdef KEY_SHELP
+	{ KEY_SHELP,	Key::SHelp }, 
+#endif
+#ifdef KEY_SHOME
+	{ KEY_SHOME,	Key::SHome }, 
+#endif
+#ifdef KEY_SIC
+	{ KEY_SIC,	Key::SIc }, 
+#endif
+#ifdef KEY_SLEFT
+	{ KEY_SLEFT,	Key::SLeft }, 
+#endif
+#ifdef KEY_SMESSAGE
+	{ KEY_SMESSAGE,	Key::SMessage }, 
+#endif
+#ifdef KEY_SMOVE
+	{ KEY_SMOVE,	Key::SMove }, 
+#endif
+#ifdef KEY_SNEXT
+	{ KEY_SNEXT,	Key::SNext }, 
+#endif
+#ifdef KEY_SOPTIONS
+	{ KEY_SOPTIONS,	Key::SOptions }, 
+#endif
+#ifdef KEY_SPREVIOUS
+	{ KEY_SPREVIOUS, Key::SPrevious }, 
+#endif
+#ifdef KEY_SPRINT
+	{ KEY_SPRINT,	Key::SPrint }, 
+#endif
+#ifdef KEY_SREDO
+	{ KEY_SREDO,	Key::SRedo }, 
+#endif
+#ifdef KEY_SREPLACE
+	{ KEY_SREPLACE,	Key::SReplace }, 
+#endif
+#ifdef KEY_SRIGHT
+	{ KEY_SRIGHT,	Key::SRight }, 
+#endif
+#ifdef KEY_SRSUME
+	{ KEY_SRSUME,	Key::SRsume }, 
+#endif
+#ifdef KEY_SSAVE
+	{ KEY_SSAVE,	Key::SSave }, 
+#endif
+#ifdef KEY_SSUSPEND
+	{ KEY_SSUSPEND,	Key::SSuspend }, 
+#endif
+#ifdef KEY_SUNDO
+	{ KEY_SUNDO,	Key::SUndo }, 
+#endif
+#ifdef KEY_SUSPEND
+	{ KEY_SUSPEND,	Key::Suspend }, 
+#endif
+#ifdef KEY_UNDO
+	{ KEY_UNDO,	Key::Undo }, 
+#endif
+#ifdef KEY_MOUSE
+	{ KEY_MOUSE,	Key::Mouse }, 
+#endif
+#ifdef KEY_RESIZE
+	{ KEY_RESIZE,	Key::Resize }, 
+#endif
+#ifdef KEY_EVENT
+	{ KEY_EVENT,	Key::Event }, 
+#endif
+});
 
 static inline void
 curs_visibility(void *win,int flag) {
@@ -92,7 +387,12 @@ curs_wmove(void *win,short y,short x) {
 
 static inline int
 curs_getch() {
-	return wgetch(stdscr);
+	int ikey = wgetch(stdscr);
+
+	auto it = keymap.find(ikey);
+	if ( it == keymap.end() )
+		return ikey;		// Return ASCII
+	return int(it->second);		// Return Key::*
 }
 
 #undef wgetch
@@ -130,6 +430,10 @@ Window::init_maps(bool colour) {
 			}
 		}
 	}
+
+	// Populate the reverse key map
+	for ( auto& pair : keymap )
+		rkeymap[pair.second] = pair.first;
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -642,6 +946,13 @@ Window::cursor(bool on) {
 
 	curs_visibility(w,on?1:0);
 	return *this;
+}
+
+bool
+Window::is_supported(Key key) {
+
+	auto it = rkeymap.find(key);
+	return it != rkeymap.end();
 }
 
 // End window.cpp
