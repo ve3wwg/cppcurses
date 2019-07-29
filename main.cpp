@@ -28,7 +28,7 @@ main(int argc,char **argv) {
 	w->bgclear();
 
 	ikey = w->readch();
-	if ( Key(ikey) == Key::Up ) {
+	if ( Window::is_supported(Key::Up) && Key(ikey) == Key::Up ) {
 		curses.close();
 		exit(1);
 	}
